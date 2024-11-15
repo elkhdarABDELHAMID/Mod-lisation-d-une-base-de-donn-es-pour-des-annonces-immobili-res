@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  # PostgreSQL service
+  db:
+    image: postgres:14
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER:postgres
+      - POSTGRES_PASSWORD:password
+      - POSTGRES_DB:db1
+    ports:
+      - "5432:5432"  # Expose PostgreSQL port to the host machine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persistent data
+
+  # Your Python application service
+  app:
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@db:5432/db1  # Connection string to PostgreSQL
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    command: python modeles_SQLAlchemy.py
+volumes:
+  postgres_data:
